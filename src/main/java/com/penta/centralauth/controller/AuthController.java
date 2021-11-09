@@ -2,11 +2,7 @@ package com.penta.centralauth.controller;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.codec.binary.Base64;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,6 +13,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.nio.charset.StandardCharsets;
 import java.security.Signature;
 import java.security.cert.X509Certificate;
 
@@ -34,20 +31,18 @@ public class AuthController {
 
     @PostMapping(value = "/data/auth")
     @SneakyThrows
-    public void sendDataToCentralFromEdge(@RequestParam("file") MultipartFile[] files,
-                                          @RequestParam("signature") MultipartFile[] signatures,
-                                          HttpServletRequest request) {
-
-        /*
-         * files[0], signatures[0] : datafile
-         * files[1], signatures[1] : certfile
-         * files[2], signatures[2] : metadata
-         * files[3], signatures[3] : hashtable
-         * */
+    public ResponseEntity<?> sendDataToCentralFromEdge(
+            @RequestParam("file") MultipartFile[] files,
+            @RequestParam("metadata") String metaJson,
+            @RequestParam("hashtable") String hashJson,
+            @RequestParam("signature") MultipartFile[] signatures,
+            HttpServletRequest request) {
 
         // Request의 인증서 추출
         X509Certificate[] certs = (X509Certificate[]) request.getAttribute("javax.servlet.request.X509Certificate");
         X509Certificate certificate = certs[0];
+
+        String errMsg = "서명 검증 실패";
 
         Signature signature = Signature.getInstance("SHA256withRSA");
         signature.initVerify(certificate.getPublicKey());
@@ -56,33 +51,48 @@ public class AuthController {
         header.setContentType(MediaType.MULTIPART_FORM_DATA);
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
 
-        for (int i = 0; i < files.length; i++) {
+        /*
+         * signatures[0] : datafile(files[0])
+         * signatures[1] : certfile(files[1])
+         * signatures[2] : metadata
+         * signatures[3] : hashtable
+         * */
 
-            MultipartFile file = files[i];
-            MultipartFile signatureBytes = signatures[i];
-            signature.update(file.getBytes());
+        for (int i = 0; i < signatures.length; i++) {
 
-            // 전자서명 binary to hex (전자서명의 hex값이 필요한 경우 사용)
-            // String signatureValue = fileManager.getHex(signatureBytes.getBytes());
+            if (i == 0 || i == 1) {
+                String key = i == 0 ? "datafile" : "certfile";
+                MultipartFile file = files[i];
+                MultipartFile signatureBytes = signatures[i];
+                signature.update(file.getBytes());
 
-            if (signature.verify(signatureBytes.getBytes())) {
-                log.info("VERIFIED SIGNATURE"); // 전자서명 검증 성공
-                switch (i) {
-                    case 0: // datafile
-                        body.add("datafile", file.getResource());
-                        break;
-                    case 1: // certfile
-                        body.add("certfile", file.getResource());
-                        break;
-                    case 2: // metadata
-                        body.add("metadata", Base64.encodeBase64URLSafeString(file.getBytes()));
-                        break;
-                    case 3: // hashtable
-                        body.add("hashtable", Base64.encodeBase64URLSafeString(file.getBytes()));
-                        break;
+                if (signature.verify(signatureBytes.getBytes())) {
+                    log.info("VERIFIED SIGNATURE"); // 전자서명 검증 성공
+                    body.add(key, file.getResource());
+                } else {
+                    log.error(errMsg);
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errMsg);
+                }
+            } else if (i == 2) {
+                MultipartFile signatureBytes = signatures[i];
+                signature.update(metaJson.getBytes(StandardCharsets.UTF_8));
+                if (signature.verify(signatureBytes.getBytes())) {
+                    log.info("VERIFIED SIGNATURE"); // 전자서명 검증 성공
+                    body.add("metadata", metaJson);
+                } else {
+                    log.error(errMsg);
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errMsg);
                 }
             } else {
-                log.error("서명 검증 실패");
+                MultipartFile signatureBytes = signatures[i];
+                signature.update(hashJson.getBytes(StandardCharsets.UTF_8));
+                if (signature.verify(signatureBytes.getBytes())) {
+                    log.info("VERIFIED SIGNATURE"); // 전자서명 검증 성공
+                    body.add("hashtable", hashJson);
+                } else {
+                    log.error(errMsg);
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errMsg);
+                }
             }
         } // end of for
 
@@ -93,13 +103,15 @@ public class AuthController {
 
         log.info("response :: {} ", response);
 
+        return ResponseEntity.status(HttpStatus.OK).body(response.getBody());
+
     }
 
     @PostMapping(value = "/item/auth")
     @SneakyThrows
-    public void sendItemToCentralFromEdge(@RequestParam("file") MultipartFile[] files,
-                                          @RequestParam("signature") MultipartFile[] signatures,
-                                          HttpServletRequest request) {
+    public ResponseEntity<?> sendItemToCentralFromEdge(@RequestParam("hashtable") String hashJson,
+                                                       @RequestParam("signature") MultipartFile[] signatures,
+                                                       HttpServletRequest request) {
 
         // Request의 인증서 추출
         X509Certificate[] certs = (X509Certificate[]) request.getAttribute("javax.servlet.request.X509Certificate");
@@ -112,31 +124,27 @@ public class AuthController {
         header.setContentType(MediaType.MULTIPART_FORM_DATA);
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
 
-        // 현재는 hashtable 1개만 받고 있음 (size = 1)
-        for (int i = 0; i < files.length; i++) {
-            log.info("hashtable(files) size :: {} ", files.length);
-            MultipartFile file = files[i];
-            MultipartFile signatureBytes = signatures[i];
-            signature.update(file.getBytes());
+        MultipartFile signatureBytes = signatures[0];
+        signature.update(hashJson.getBytes());
 
-            // 전자서명 binary to hex (전자서명의 hex값이 필요한 경우 사용)
-            // String signatureValue = fileManager.getHex(signatureBytes.getBytes());
-
-            if (signature.verify(signatureBytes.getBytes())) {
-                log.info("VERIFIED SIGNATURE"); // 전자서명 검증 성공
-                body.add("hashtable", Base64.encodeBase64URLSafeString(file.getBytes()));
-            } else {
-                log.error("서명 검증 실패");
-            }
-
-            HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, header);
-            String centralUrl = "http://20.196.220.98:80/api/tracking/add/item";
-            RestTemplate restTemplate = new RestTemplate();
-            ResponseEntity<String> response = restTemplate.postForEntity(centralUrl, requestEntity, String.class);
-
-            log.info("response :: {}", response);
+        if (signature.verify(signatureBytes.getBytes())) {
+            log.info("VERIFIED SIGNATURE"); // 전자서명 검증 성공
+            body.add("hashtable", hashJson);
+        } else {
+            log.error("서명 검증 실패");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("서명 검증 실패");
         }
 
+        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, header);
+        String centralUrl = "http://20.196.220.98:80/api/tracking/add/item";
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> response = restTemplate.postForEntity(centralUrl, requestEntity, String.class);
+
+        log.info("response :: {}", response);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response.getBody());
+
     }
+
 
 }
