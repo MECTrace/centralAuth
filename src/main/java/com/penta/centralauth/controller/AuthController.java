@@ -97,7 +97,7 @@ public class AuthController {
         } // end of for
 
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, header);
-        String centralUrl = "http://20.196.220.98:80/api/tracking/add/data";
+        String centralUrl = "http://localhost/api/tracking/add/data";
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> response = restTemplate.postForEntity(centralUrl, requestEntity, String.class);
 
@@ -136,7 +136,7 @@ public class AuthController {
         }
 
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, header);
-        String centralUrl = "http://20.196.220.98:80/api/tracking/add/item";
+        String centralUrl = "http://localhost:80/api/tracking/add/item";
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> response = restTemplate.postForEntity(centralUrl, requestEntity, String.class);
 
