@@ -38,6 +38,8 @@ public class AuthController {
             @RequestParam("signature") MultipartFile[] signatures,
             HttpServletRequest request) {
 
+        log.info("***************** device -> edge -> central(direct) *****************");
+
         // Request의 인증서 추출
         X509Certificate[] certs = (X509Certificate[]) request.getAttribute("javax.servlet.request.X509Certificate");
         X509Certificate certificate = certs[0];
@@ -113,6 +115,8 @@ public class AuthController {
                                                        @RequestParam("signature") MultipartFile[] signatures,
                                                        HttpServletRequest request) {
 
+        log.info("***************** device -> edge1 -> edge2 -> central *****************");
+
         // Request의 인증서 추출
         X509Certificate[] certs = (X509Certificate[]) request.getAttribute("javax.servlet.request.X509Certificate");
         X509Certificate certificate = certs[0];
@@ -121,7 +125,7 @@ public class AuthController {
         signature.initVerify(certificate.getPublicKey());
 
         HttpHeaders header = new HttpHeaders();
-        header.setContentType(MediaType.MULTIPART_FORM_DATA);
+        header.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
 
         MultipartFile signatureBytes = signatures[0];
