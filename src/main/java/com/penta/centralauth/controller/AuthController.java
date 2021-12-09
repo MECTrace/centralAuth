@@ -99,6 +99,15 @@ public class AuthController {
         } // end of for
 
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, header);
+
+        log.info("----------------------------------------------");
+        log.info("      HTTP REQUEST BODY(without files)        ");
+        log.info("----------------------------------------------");
+
+        log.info("metadata : {}", body.get("metadata"));
+        log.info("hashtable : {}", body.get("hashtable"));
+
+
         String centralUrl = "http://localhost:80/api/tracking/add/data";
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> response = restTemplate.postForEntity(centralUrl, requestEntity, String.class);
