@@ -148,6 +148,12 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("서명 검증 실패");
         }
 
+        log.info("----------------------------------------------");
+        log.info("              HTTP REQUEST BODY               ");
+        log.info("----------------------------------------------");
+
+        log.info("hashtable : {}", body.get("hashtable"));
+
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, header);
         String centralUrl = "http://127.0.0.1:80/api/tracking/add/item";
         RestTemplate restTemplate = new RestTemplate();
