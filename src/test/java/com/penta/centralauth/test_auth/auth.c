@@ -58,4 +58,8 @@ void CAN_TJA1043T_Enable(void)
     PINS_DRV_WritePin(PTB, 3, 1);
 }
 
+void InitCan(void){
+    uint8_t TxNumber=0;
+}
+
 }
