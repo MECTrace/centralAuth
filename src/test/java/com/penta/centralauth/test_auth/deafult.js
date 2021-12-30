@@ -13,6 +13,13 @@ $.extend({
     "register": function(){
         $.ajax({
             dataType: "html",
+
+            success: function(res){{
+                $("#default-modal .modal-content").html(res);
+				$("#default-modal").modal();
+
+                
+            }}
         });
     },
 });
