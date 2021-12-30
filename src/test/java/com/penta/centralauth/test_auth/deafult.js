@@ -59,5 +59,10 @@ $.extend({
 
 			new_payload += ek+"="+ev+"&";
 		})
+
+        new_payload += "type="+payload_type;
+		if($("#register_wrap .form_payload:visible select[name='nack_code']").val()){
+			new_payload += "&nack_code="+$("#register_wrap .form_payload:visible select[name='nack_code']").val();
+		}
     }
 });
