@@ -49,5 +49,8 @@ $.extend({
         var obj = $("#register_wrap .form_payload:visible input:text");
 
         var new_payload = "";
+
+        new_payload += "rule_order="+$("#register_wrap input[name='rule_order']").val()+"&";
+		new_payload += "rule_action="+$("#register_wrap select[name='rule_action']").val()+"&";
     }
 });
