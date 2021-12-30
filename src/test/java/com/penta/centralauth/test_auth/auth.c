@@ -27,3 +27,9 @@ flexcan_data_info_t TXdataInfo =
 
 uint8_t Tx_Buffer[64] = {0, };
 uint16_t CANtimeout = 0;
+
+void SendCanData(uint8_t inst, uint32_t mailbox, uint32_t messageId, uint8_t * data, uint32_t len)
+{
+
+
+}
