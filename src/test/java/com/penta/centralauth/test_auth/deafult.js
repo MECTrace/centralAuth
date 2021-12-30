@@ -21,6 +21,12 @@ $.extend({
                 $(".action_register_submit").click(function(){
 					$.register_submit();	
 				});
+
+                $("#register_payload_type").change(function(){
+					$(".form_payload").hide();	
+					
+					
+				});
             }}
         });
     },
