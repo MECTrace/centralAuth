@@ -9,36 +9,38 @@ $(document).ready(function(){
 });
 
 $.extend({
-    //add register to do
-    "register": function(){
-        $.ajax({
-            dataType: "html",
+	"register": function(){
 
-            success: function(res){{
-                $("#default-modal .modal-content").html(res);
+		$.ajax({
+			url: "/rule/list/register",
+			dataType: "html",
+			type: "POST",
+			success: function(res){
+				$("#default-modal .modal-content").html(res);
 				$("#default-modal").modal();
 
-                $(".action_register_submit").click(function(){
+				// register submit
+				$(".action_register_submit").click(function(){
 					$.register_submit();	
 				});
 
-                $("#register_payload_type").change(function(){
+				// show from payload
+				$("#register_payload_type").change(function(){
 					$(".form_payload").hide();	
 					
 					var target_id = $(this).val();
 					$("#"+target_id).show();
 				});
-
-                $('[data-toggle="popover"]').popover({
+				
+				// popover
+				$('[data-toggle="popover"]').popover({
 					"placement":	"left",
 					"trigger":		"focus",
 				});
-            },
-                error: function(res){
-                    console.log(res);	
-                }
-            }}
-            
-        });
-    },
+			},
+			error: function(res){
+				console.log(res);	
+			}
+		});
+	},
 });
