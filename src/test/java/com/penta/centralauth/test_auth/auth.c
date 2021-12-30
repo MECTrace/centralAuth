@@ -49,6 +49,8 @@ void SendCanData(uint8_t inst, uint32_t mailbox, uint32_t messageId, uint8_t * d
     {
     	while(FLEXCAN_DRV_Send(inst, mailbox, &dataInfo, messageId, data) == STATUS_BUSY);
     }
+    
     }
+    CANtimeout = 0;
 
 }
