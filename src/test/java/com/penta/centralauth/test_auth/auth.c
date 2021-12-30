@@ -61,7 +61,7 @@ void CAN_TJA1043T_Enable(void)
 void InitCan(void){
     uint8_t TxNumber=0;
 
-    FLEXCAN_DRV_Init(INST_CANCOM1, &canCom1_State, &canCom1_InitConfig0); 
+    FLEXCAN_DRV_Init(INST_CANCOM1, &canCom1_State, &canCom1_InitConfig0); //CAN0
     FLEXCAN_DRV_Init(INST_CANCOM2, &canCom2_State, &canCom2_InitConfig0);
 }
 
