@@ -69,7 +69,16 @@ $.extend({
 			dataType: "json",
 			data: new_payload,
 			type: "POST",
-			
+            success: function(res){
+				if(res.result == "success"){
+					alert("Success");	
+					window.location.reload();
+				}else{
+					alert("fail");	
+				}
+			},error: function(res){
+				console.log(res);	
+			}			
 		});
 
     }
