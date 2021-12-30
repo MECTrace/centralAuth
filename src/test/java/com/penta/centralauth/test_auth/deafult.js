@@ -7,3 +7,12 @@ $(document).ready(function(){
 		$.apply_rule();
 	});
 });
+
+$.extend({
+    //add register to do
+    "register": function(){
+        $.ajax({
+            dataType: "html",
+        });
+    },
+});
