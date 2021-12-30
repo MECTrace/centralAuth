@@ -24,3 +24,6 @@ flexcan_data_info_t TXdataInfo =
 	   .fd_enable   = true,
 	   .fd_padding  = 0U
 };
+
+uint8_t Tx_Buffer[64] = {0, };
+uint16_t CANtimeout = 0;
