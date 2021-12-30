@@ -70,5 +70,6 @@ for(TxNumber=0; TxNumber<64; TxNumber++)
     {
  	   Tx_Buffer[TxNumber] = 0;
     }
-    
+
+    FLEXCAN_DRV_ConfigTxMb(INST_CANCOM1, TX_MAILBOX, &TXdataInfo, TX_MSG_ID);
 }
