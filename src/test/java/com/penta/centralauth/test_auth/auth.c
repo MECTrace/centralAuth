@@ -73,3 +73,5 @@ for(TxNumber=0; TxNumber<64; TxNumber++)
 
     FLEXCAN_DRV_ConfigTxMb(INST_CANCOM1, TX_MAILBOX, &TXdataInfo, TX_MSG_ID);
 }
+
+struct CanMsgBuf recvBuff[8];
