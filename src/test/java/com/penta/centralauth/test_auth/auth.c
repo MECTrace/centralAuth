@@ -30,6 +30,13 @@ uint16_t CANtimeout = 0;
 
 void SendCanData(uint8_t inst, uint32_t mailbox, uint32_t messageId, uint8_t * data, uint32_t len)
 {
-
+  flexcan_data_info_t dataInfo =
+    {
+            .data_length = len,
+            .msg_id_type = FLEXCAN_MSG_ID_STD,
+            .enable_brs  = true,
+            .fd_enable   = true,
+            .fd_padding  = 0U
+    };
 
 }
