@@ -52,5 +52,12 @@ $.extend({
 
         new_payload += "rule_order="+$("#register_wrap input[name='rule_order']").val()+"&";
 		new_payload += "rule_action="+$("#register_wrap select[name='rule_action']").val()+"&";
+
+        $.each(obj, function(key, val){
+			ek = $(this).attr("name");
+			ev = $(this).val();
+
+			new_payload += ek+"="+ev+"&";
+		})
     }
 });
