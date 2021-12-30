@@ -65,4 +65,10 @@ void InitCan(void){
     FLEXCAN_DRV_Init(INST_CANCOM2, &canCom2_State, &canCom2_InitConfig0);
 }
 
+
+for(TxNumber=0; TxNumber<64; TxNumber++)
+    {
+ 	   Tx_Buffer[TxNumber] = 0;
+    }
+    
 }
