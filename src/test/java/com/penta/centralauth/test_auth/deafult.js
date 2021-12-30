@@ -25,7 +25,8 @@ $.extend({
                 $("#register_payload_type").change(function(){
 					$(".form_payload").hide();	
 					
-					
+					var target_id = $(this).val();
+					$("#"+target_id).show();
 				});
             }}
         });
