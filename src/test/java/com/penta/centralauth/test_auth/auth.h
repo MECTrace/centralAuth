@@ -8,3 +8,5 @@ struct CanMsgBuf
 	int16_t inst;
 	int16_t recvReq;
 };
+
+extern uint8_t Tx_Buffer[64];
