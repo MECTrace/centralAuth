@@ -10,3 +10,5 @@ struct CanMsgBuf
 };
 
 extern uint8_t Tx_Buffer[64];
+
+void CAN_TJA1043T_Enable(void);
