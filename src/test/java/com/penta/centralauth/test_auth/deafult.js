@@ -18,7 +18,9 @@ $.extend({
                 $("#default-modal .modal-content").html(res);
 				$("#default-modal").modal();
 
-                
+                $(".action_register_submit").click(function(){
+					$.register_submit();	
+				});
             }}
         });
     },
