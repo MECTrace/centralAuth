@@ -67,6 +67,8 @@ $.extend({
 
         $.ajax({
 			dataType: "json",
+			data: new_payload,
+			type: "POST",
 			
 		});
 
