@@ -39,4 +39,16 @@ void SendCanData(uint8_t inst, uint32_t mailbox, uint32_t messageId, uint8_t * d
             .fd_padding  = 0U
     };
 
+    if(messageId != 0x4c1 || messageId != 0x4c2)
+    {
+    	while(FLEXCAN_DRV_Send(inst, mailbox, &dataInfo, messageId, data) == STATUS_BUSY && CANtimeout < 1000)
+    	{
+    		CANtimeout++;
+    	}
+         else
+    {
+    	while(FLEXCAN_DRV_Send(inst, mailbox, &dataInfo, messageId, data) == STATUS_BUSY);
+    }
+    }
+
 }
