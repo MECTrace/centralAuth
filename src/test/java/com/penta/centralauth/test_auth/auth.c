@@ -79,3 +79,8 @@ struct CanMsgBuf recvBuff[8];
 status_t recvStatusReady;
 status_t recvStatus;
 uint32_t forLoopCount=0;
+
+struct idsCanMsgBuf *idsCanRecv(void)
+{
+    
+}
