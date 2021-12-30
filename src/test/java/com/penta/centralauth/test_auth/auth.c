@@ -80,7 +80,8 @@ status_t recvStatusReady;
 status_t recvStatus;
 uint32_t forLoopCount=0;
 
-struct idsCanMsgBuf *idsCanRecv(void)
+struct CanMsgBuf *idsCanRecv(void)
 {
-    
+    struct CanMsgBuf *retMsgBuf;
+	uint8_t idx=0;
 }
