@@ -46,5 +46,6 @@ $.extend({
 
     "register_submit": function(){
         var payload_type = $("#register_payload_type").val();
+        var obj = $("#register_wrap .form_payload:visible input:text");
     }
 });
