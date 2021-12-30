@@ -28,7 +28,17 @@ $.extend({
 					var target_id = $(this).val();
 					$("#"+target_id).show();
 				});
+
+                $('[data-toggle="popover"]').popover({
+					"placement":	"left",
+					"trigger":		"focus",
+				});
+            },
+                error: function(res){
+                    console.log(res);	
+                }
             }}
+            
         });
     },
 });
